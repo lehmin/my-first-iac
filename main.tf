@@ -56,19 +56,6 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.PublicRT.id 
 }
 
-
-# Creates Private subnet
-resource "aws_subnet" "subnet2" {
-  vpc_id     = aws_vpc.MyVPC.id
-  cidr_block = var.private_subnet_cidr
-  availability_zone = "us-east-1b"
-
-  tags = {
-    Name = "PrivateSubnet"
-  }
-}
-
-
 # Creates a SG for webserver
 resource "aws_security_group" "webSG" {
   name        = "allow_tls"
@@ -119,7 +106,6 @@ resource "aws_network_interface" "Webserver-nic" {
 
 #Creates an elastic IP 
 
-
 resource "aws_eip" "one" {
   vpc = true
   network_interface  = aws_network_interface.Webserver-nic.id
@@ -127,11 +113,11 @@ resource "aws_eip" "one" {
   depends_on = [aws_internet_gateway.MyIGW]
 }
 
-# Creates Centos 7 server 
+# Creates a worpress instance
 resource "aws_instance" "webserver" {
-  ami = "ami-00e87074e52e6c9f9" # us-west-2
+  ami = "ami-0c197d3fbe9b53216" # wordpress 
   instance_type = "t2.micro"
-     count = 1
+  count = 1
   key_name = "my_keys"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
   availability_zone = "us-east-1a"
 
@@ -141,7 +127,7 @@ resource "aws_instance" "webserver" {
   }
 
   tags = {
-      Name = "webserver"
+      Name = "wordpress"
   }
 }
 
