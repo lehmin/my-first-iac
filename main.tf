@@ -106,7 +106,7 @@ resource "aws_network_interface" "Webserver-nic" {
 
 #Creates an elastic IP 
 
-resource "aws_eip" "one" {
+resource "aws_eip" "eip1" {
   vpc = true
   network_interface  = aws_network_interface.Webserver-nic.id
   associate_with_private_ip = "10.1.1.50"
@@ -114,10 +114,9 @@ resource "aws_eip" "one" {
 }
 
 # Creates a worpress instance
-resource "aws_instance" "webserver" {
+resource "aws_instance" "wordpress" {
   ami = "ami-0c197d3fbe9b53216" # wordpress 
   instance_type = "t2.micro"
-  count = 1
   key_name = "my_keys"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
   availability_zone = "us-east-1a"
 
@@ -129,6 +128,11 @@ resource "aws_instance" "webserver" {
   tags = {
       Name = "wordpress"
   }
+}
+
+resource "aws_eip_association" "wp_eip_assoc" {
+  instance_id   = aws_instance.wordpress.id
+  allocation_id = aws_eip.eip1.id
 }
 
 resource "aws_key_pair" "my_keys" {
